@@ -6,7 +6,7 @@
       "value": "northeurope"
     },
     "clusterName": {
-      "value": "ccsharkhack"
+      "value": "ccoctohack"
     },
     "adminUserName": {
       "value": "hackuser"
@@ -60,10 +60,7 @@
       "value": 3
     },
     "omsWorkspacename": {
-      "value": "ccsharkoms"
-    },
-    "applicationInsightsKey": {
-      "value": "63c603b8-801d-4ae1-a574-0552620c70c9"
+      "value": "ccoctooms"
     },
     "sfReverseProxyPort": {
         "value": 8081
@@ -74,5 +71,8 @@
     "secCertificateUrlValue": {
       "value": "https://ccmsldnkv.vault.azure.net/secrets/clustersecpfx/c784930c323048e2a813264c07c4d58e"
      },
+     "apimPublisherEmail": {
+       "value": "lee.stead@callcreditgroup.com"
+     }
   }
 }

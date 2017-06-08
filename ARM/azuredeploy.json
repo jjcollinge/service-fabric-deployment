@@ -32,25 +32,29 @@
       "type": "string",
       "defaultValue": "MicrosoftWindowsServer",
       "metadata": {
-      "description": "VM image Publisher"}
+        "description": "VM image Publisher"
+      }
     },
     "vmImageOffer": {
       "type": "string",
       "defaultValue": "WindowsServer",
       "metadata": {
-      "description": "VM image offer"}
+        "description": "VM image offer"
+      }
     },
     "vmImageSku": {
       "type": "string",
       "defaultValue": "2012-R2-Datacenter",
       "metadata": {
-      "description": "VM image SKU"}
+        "description": "VM image SKU"
+      }
     },
     "vmImageVersion": {
       "type": "string",
       "defaultValue": "latest",
       "metadata": {
-      "description": "VM image version"}
+        "description": "VM image version"
+      }
     },
     "loadBalancedAppPort1": {
       "type": "int",
@@ -97,12 +101,6 @@
       "type": "string",
       "metadata": {
         "description": "Refers to the location URL in your key vault where the certificate was uploaded, it is should be in the format of https://<name of the vault>.vault.azure.net:443/secrets/<exact location>"
-      }
-    },
-    "applicationInsightsKey": {
-      "type": "string",
-      "metadata": {
-        "description": "Application Insights Instrumentation Key"
       }
     },
     "storageAccountType": {
@@ -167,11 +165,11 @@
       }
     },
     "sfReverseProxyPort": {
-        "type": "int",
-        "defaultValue": 8081,
-        "metadata": {
-            "description": "Endpoint for Service Fabric Reverse proxy"
-        }
+      "type": "int",
+      "defaultValue": 8081,
+      "metadata": {
+        "description": "Endpoint for Service Fabric Reverse proxy"
+      }
     },
     "secCertificateThumbprint": {
       "type": "string",
@@ -185,6 +183,9 @@
         "description": "Refers to the location URL in your key vault where the certificate was uploaded, it is should be in the format of https://<name of the vault>.vault.azure.net:443/secrets/<exact location>"
       }
     },
+    "apimPublisherEmail": {
+      "type": "string"
+    }
   },
   "variables": {
     "computeLocation": "[parameters('clusterLocation')]",
@@ -289,7 +290,15 @@
     "solution": "[Concat('ServiceFabric', '(', parameters('omsWorkspacename'), ')')]",
     "solutionsecurity": "[concat('Security', '(', parameters('omsWorkspacename'), ')')]",
     "solutionName": "ServiceFabric",
-    "securitysolution": "Security"
+    "securitysolution": "Security",
+    "apimInstanceName": "[toLower(concat('apim', uniqueString(resourceGroup().id)))]",
+    "apimIP": "[concat(variables('apimInstanceName'), '-public-ip')]",
+    "apimSubnetName": "apim-subnet",
+    "apimDnsName": "[toLower(concat(parameters('ClusterName'), 'apim'))]",
+    "apimSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('apimSubnetName'))]",
+    "apimSgName": "apim-vnet-security",
+    "apimSgVersion": "2017-03-01",
+    "apimSubnetPrefix": "193.150.4.0/24"
   },
   "resources": [
     {
@@ -329,7 +338,8 @@
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', concat('nsg', variables('subnet0Name')))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', concat('nsg', variables('subnet1Name')))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', concat('nsg', variables('subnet2Name')))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', concat('nsg', variables('subnet2Name')))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/', concat(variables('apimSgName')))]"
       ],
       "properties": {
         "addressSpace": {
@@ -362,6 +372,15 @@
               "addressPrefix": "[variables('subnet2Prefix')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg', variables('subnet2Name')))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('apimSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('apimSubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('apimSgName'))]"
               }
             }
           }
@@ -474,33 +493,33 @@
           {
             "name": "LBSFReverseProxyRule",
             "properties": {
-                "backendAddressPool": {
-                    "id": "[variables('lbPoolID0')]"
-                },
-                "backendPort": "[parameters('sfReverseProxyPort')]",
-                "enableFloatingIP": "false",
-                "frontendIPConfiguration": {
-                    "id": "[variables('lbIPConfig0')]"
-                },
-                "frontendPort": "[parameters('sfReverseProxyPort')]",
-                "idleTimeoutInMinutes": "5",
-                "probe": {
-                    "id": "[concat(variables('lbID0'),'/probes/SFReverseProxyProbe')]"
-                },
-                "protocol": "tcp"
+              "backendAddressPool": {
+                "id": "[variables('lbPoolID0')]"
+              },
+              "backendPort": "[parameters('sfReverseProxyPort')]",
+              "enableFloatingIP": "false",
+              "frontendIPConfiguration": {
+                "id": "[variables('lbIPConfig0')]"
+              },
+              "frontendPort": "[parameters('sfReverseProxyPort')]",
+              "idleTimeoutInMinutes": "5",
+              "probe": {
+                "id": "[concat(variables('lbID0'),'/probes/SFReverseProxyProbe')]"
+              },
+              "protocol": "tcp"
             }
-        }
+          }
         ],
         "probes": [
-            {
+          {
             "name": "SFReverseProxyProbe",
             "properties": {
-                "intervalInSeconds": 5,
-                "numberOfProbes": 2,
-                "port":     "[parameters('sfReverseProxyPort')]",
-                "protocol": "tcp"
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2,
+              "port": "[parameters('sfReverseProxyPort')]",
+              "protocol": "tcp"
             }
-        },
+          },
           {
             "name": "FabricGatewayProbe",
             "properties": {
@@ -765,10 +784,6 @@
                     "certificate": {
                       "thumbprint": "[parameters('certificateThumbprint')]",
                       "x509StoreName": "[parameters('certificateStoreValue')]"
-                    },
-                    "certificateSecondary": {
-                        "thumbprint": "[parameters('secCertificateThumbprint')]",
-                        "x509StoreName": "[parameters('certificateStoreValue')]"
                     }
                   },
                   "typeHandlerVersion": "1.0"
@@ -840,7 +855,7 @@
                         "Sink": [
                           {
                             "name": "applicationInsights",
-                            "ApplicationInsights": "[parameters('applicationInsightsKey')]"
+                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),'ai1234')), '2014-04-01').InstrumentationKey]"
                           }
                         ]
                       }
@@ -1030,36 +1045,37 @@
               },
               "protocol": "tcp"
             }
-          },{
+          },
+          {
             "name": "LBSFReverseProxyRule",
             "properties": {
-                "backendAddressPool": {
-                    "id": "[variables('lbPoolID1')]"
-                },
-                "backendPort": "[parameters('sfReverseProxyPort')]",
-                "enableFloatingIP": "false",
-                "frontendIPConfiguration": {
-                    "id": "[variables('lbIPConfig1')]"
-                },
-                "frontendPort": "[parameters('sfReverseProxyPort')]",
-                "idleTimeoutInMinutes": "5",
-                "probe": {
-                    "id": "[concat(variables('lbID1'),'/probes/SFReverseProxyProbe')]"
-                },
-                "protocol": "tcp"
+              "backendAddressPool": {
+                "id": "[variables('lbPoolID1')]"
+              },
+              "backendPort": "[parameters('sfReverseProxyPort')]",
+              "enableFloatingIP": "false",
+              "frontendIPConfiguration": {
+                "id": "[variables('lbIPConfig1')]"
+              },
+              "frontendPort": "[parameters('sfReverseProxyPort')]",
+              "idleTimeoutInMinutes": "5",
+              "probe": {
+                "id": "[concat(variables('lbID1'),'/probes/SFReverseProxyProbe')]"
+              },
+              "protocol": "tcp"
             }
-        }
+          }
         ],
         "probes": [
-            {
+          {
             "name": "SFReverseProxyProbe",
             "properties": {
-                "intervalInSeconds": 5,
-                "numberOfProbes": 2,
-                "port":     "[parameters('sfReverseProxyPort')]",
-                "protocol": "tcp"
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2,
+              "port": "[parameters('sfReverseProxyPort')]",
+              "protocol": "tcp"
             }
-        }  ,
+          },
           {
             "name": "FabricGatewayProbe",
             "properties": {
@@ -1324,10 +1340,6 @@
                     "certificate": {
                       "thumbprint": "[parameters('certificateThumbprint')]",
                       "x509StoreName": "[parameters('certificateStoreValue')]"
-                    },
-                    "certificateSecondary": {
-                        "thumbprint": "[parameters('secCertificateThumbprint')]",
-                        "x509StoreName": "[parameters('certificateStoreValue')]"
                     }
                   },
                   "typeHandlerVersion": "1.0"
@@ -1399,7 +1411,7 @@
                         "Sink": [
                           {
                             "name": "applicationInsights",
-                            "ApplicationInsights": "[parameters('applicationInsightsKey')]"
+                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),'ai1234')), '2014-04-01').InstrumentationKey]"
                           }
                         ]
                       }
@@ -1593,32 +1605,33 @@
           {
             "name": "LBSFReverseProxyRule",
             "properties": {
-                "backendAddressPool": {
-                    "id": "[variables('lbPoolID2')]"
-                },
-                "backendPort": "[parameters('sfReverseProxyPort')]",
-                "enableFloatingIP": "false",
-                "frontendIPConfiguration": {
-                    "id": "[variables('lbIPConfig2')]"
-                },
-                "frontendPort": "[parameters('sfReverseProxyPort')]",
-                "idleTimeoutInMinutes": "5",
-                "probe": {
-                    "id": "[concat(variables('lbID2'),'/probes/SFReverseProxyProbe')]"
-                },
-                "protocol": "tcp"
+              "backendAddressPool": {
+                "id": "[variables('lbPoolID2')]"
+              },
+              "backendPort": "[parameters('sfReverseProxyPort')]",
+              "enableFloatingIP": "false",
+              "frontendIPConfiguration": {
+                "id": "[variables('lbIPConfig2')]"
+              },
+              "frontendPort": "[parameters('sfReverseProxyPort')]",
+              "idleTimeoutInMinutes": "5",
+              "probe": {
+                "id": "[concat(variables('lbID2'),'/probes/SFReverseProxyProbe')]"
+              },
+              "protocol": "tcp"
             }
-        }
+          }
         ],
-        "probes": [{
+        "probes": [
+          {
             "name": "SFReverseProxyProbe",
             "properties": {
-                "intervalInSeconds": 5,
-                "numberOfProbes": 2,
-                "port":     "[parameters('sfReverseProxyPort')]",
-                "protocol": "tcp"
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2,
+              "port": "[parameters('sfReverseProxyPort')]",
+              "protocol": "tcp"
             }
-        }  ,
+          },
           {
             "name": "FabricGatewayProbe",
             "properties": {
@@ -1883,10 +1896,6 @@
                     "certificate": {
                       "thumbprint": "[parameters('certificateThumbprint')]",
                       "x509StoreName": "[parameters('certificateStoreValue')]"
-                    },
-                    "certificateSecondary": {
-                        "thumbprint": "[parameters('secCertificateThumbprint')]",
-                        "x509StoreName": "[parameters('certificateStoreValue')]"
                     }
                   },
                   "typeHandlerVersion": "1.0"
@@ -1958,7 +1967,7 @@
                         "Sink": [
                           {
                             "name": "applicationInsights",
-                            "ApplicationInsights": "[parameters('applicationInsightsKey')]"
+                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),'ai1234')), '2014-04-01').InstrumentationKey]"
                           }
                         ]
                       }
@@ -2061,7 +2070,6 @@
       "properties": {
         "certificate": {
           "thumbprint": "[parameters('certificateThumbprint')]",
-          "thumbprintSecondary": "[parameters('secCertificateThumbprint')]",
           "x509StoreName": "[parameters('certificateStoreValue')]"
         },
         "clientCertificateCommonNames": [],
@@ -2086,7 +2094,7 @@
           }
         ],
         "addonFeatures": [
-            "DnsService"
+          "DnsService"
         ],
         "managementEndpoint": "[concat('https://',reference(concat(variables('lbIPName'),'-','0')).dnsSettings.fqdn,':',variables('nt0fabricHttpGatewayPort'))]",
         "nodeTypes": [
@@ -2107,9 +2115,9 @@
             "vmInstanceCount": "[parameters('nt0InstanceCount')]",
             "reverseProxyEndpointPort": "[parameters('sfReverseProxyPort')]",
             "placementProperties": {
-                "IsPCI": "true",
-                "NodeColour": "green",
-                "IsDMZ": "false"
+              "IsPCI": "true",
+              "NodeColour": "green",
+              "IsDMZ": "false"
             }
           },
           {
@@ -2129,9 +2137,9 @@
             "vmInstanceCount": "[parameters('nt1InstanceCount')]",
             "reverseProxyEndpointPort": "[parameters('sfReverseProxyPort')]",
             "placementProperties": {
-                "IsPCI": "false",
-                "NodeColour": "green",
-                "IsDMZ": "false"
+              "IsPCI": "false",
+              "NodeColour": "green",
+              "IsDMZ": "false"
             }
           },
           {
@@ -2151,9 +2159,9 @@
             "vmInstanceCount": "[parameters('nt2InstanceCount')]",
             "reverseProxyEndpointPort": "[parameters('sfReverseProxyPort')]",
             "placementProperties": {
-                "IsPCI": "false",
-                "NodeColour": "green",
-                "IsDMZ": "true"
+              "IsPCI": "false",
+              "NodeColour": "green",
+              "IsDMZ": "true"
             }
           }
         ],
@@ -2323,6 +2331,68 @@
         "publisher": "Microsoft",
         "product": "[Concat('OMSGallery/', variables('securitysolution'))]",
         "promotionCode": ""
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('apimIP')]",
+      "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "resourceType": "API Management",
+        "clusterName": "[variables('apimInstanceName')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "idleTimeoutInMinutes": 4,
+        "dnsSettings": {
+          "domainNameLabel": "[variables('apimDnsName')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service",
+      "sku": {
+        "name": "Developer",
+        "capacity": 1
+      },
+      "name": "[concat(parameters('clusterName'),'apim1234')]",
+      "apiVersion": "2016-07-07",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {
+        "publisherEmail": "[parameters('apimPublisherEmail')]",
+        "publisherName": "Microsoft",
+        "provisioningState": "Succeeded",
+        "targetProvisioningState": "",
+        "createdAtUtc": "2017-03-30T21:26:15.2829367Z",
+        "runtimeUrl": "[concat('https://', variables('apimInstanceName'),'.azure-api.net')]",
+        "portalUrl": "[concat('https://', variables('apimInstanceName'),'.portal.azure-api.net')]",
+        "managementApiUrl": "[concat('https://', variables('apimInstanceName'),'.management.azure-api.net')]",
+        "scmUrl": "[concat('https://', variables('apimInstanceName'),'.scm.azure-api.net')]",
+        "addresserEmail": null,
+        "hostnameConfigurations": [],
+        "staticIPs": [
+          "[reference(variables('apimIP'))]"
+        ],
+        "additionalLocations": null,
+        "vpnconfiguration": {
+          "subnetResourceId": "[variables('apimSubnetId')]",
+          "location": "[resourceGroup().location]"
+        },
+        "customProperties": {
+          "subnetAddress": "[reference(variables('apimSubnetId'), variables('vNetApiVersion')).addressPrefix]"
+        },
+        "vpnType": 1
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('apimSgName')]",
+      "apiVersion": "[variables('apimSgVersion')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": []
       }
     }
   ],
