@@ -6,7 +6,7 @@
       "value": "northeurope"
     },
     "clusterName": {
-      "value": "ccoctohack"
+      "value": "ccmsfthackldn"
     },
     "adminUserName": {
       "value": "hackuser"
@@ -35,14 +35,14 @@
     "certificateStoreValue": {
       "value": "My"
     },
-    "certificateThumbprint": {
-      "value": "4A8960FF0D7CB7F91F3BEDFB0803032D281E237A"
-    },
     "sourceVaultvalue": {
       "value": "/subscriptions/6bcafabb-f2b5-425d-9ffa-f59a15c80ef1/resourceGroups/ccmsldnhackpersist/providers/Microsoft.KeyVault/vaults/ccmsldnkv"
     },
+    "certificateThumbprint": {
+      "value": "487108B17DB3809484B469D722AE1051D7B8D7813"
+    },
     "certificateUrlvalue": {
-      "value": "https://ccmsldnkv.vault.azure.net/secrets/clusterpfx/17e12570113a438ca0ce6e93d942cf9e"
+      "value": "https://ccmsldnkv.vault.azure.net/secrets/ccmsfthackldn/8e5b4b6e042441cda124fb7c3faca55a"
     },
     "storageAccountType": {
       "value": "Standard_LRS"
@@ -60,19 +60,10 @@
       "value": 3
     },
     "omsWorkspacename": {
-      "value": "ccoctooms"
+      "value": "ccmsfthackldnoms"
     },
     "sfReverseProxyPort": {
         "value": 8081
-    },
-    "secCertificateThumbprint": {
-      "value": "6F8DF17647EF8E74F38C592AD9CFEBB667B662BC"
-    },
-    "secCertificateUrlValue": {
-      "value": "https://ccmsldnkv.vault.azure.net/secrets/clustersecpfx/c784930c323048e2a813264c07c4d58e"
-     },
-     "apimPublisherEmail": {
-       "value": "lee.stead@callcreditgroup.com"
-     }
+    }
   }
 }
