@@ -1,0 +1,78 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "clusterLocation": {
+      "value": "northeurope"
+    },
+    "clusterName": {
+      "value": "ccsharkhack"
+    },
+    "adminUserName": {
+      "value": "hackuser"
+    },
+    "adminPassword": {
+      "value": "ServiceF@bric"
+    },
+    "vmImagePublisher": {
+      "value": "MicrosoftWindowsServer"
+    },
+    "vmImageOffer": {
+      "value": "WindowsServer"
+    },
+    "vmImageSku": {
+      "value": "2016-Datacenter-with-containers"
+    },
+    "vmImageVersion": {
+      "value": "latest"
+    },
+    "loadBalancedAppPort1": {
+      "value": 80
+    },
+    "clusterProtectionLevel": {
+      "value": "EncryptAndSign"
+    },
+    "certificateStoreValue": {
+      "value": "My"
+    },
+    "certificateThumbprint": {
+      "value": "4A8960FF0D7CB7F91F3BEDFB0803032D281E237A"
+    },
+    "sourceVaultvalue": {
+      "value": "/subscriptions/6bcafabb-f2b5-425d-9ffa-f59a15c80ef1/resourceGroups/ccmsldnhackpersist/providers/Microsoft.KeyVault/vaults/ccmsldnkv"
+    },
+    "certificateUrlvalue": {
+      "value": "https://ccmsldnkv.vault.azure.net/secrets/clusterpfx/17e12570113a438ca0ce6e93d942cf9e"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "supportLogStorageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "nt0InstanceCount": {
+      "value": 5
+    },
+    "nt1InstanceCount": {
+      "value": 3
+    },
+    "nt2InstanceCount": {
+      "value": 3
+    },
+    "omsWorkspacename": {
+      "value": "ccsharkoms"
+    },
+    "applicationInsightsKey": {
+      "value": "63c603b8-801d-4ae1-a574-0552620c70c9"
+    },
+    "sfReverseProxyPort": {
+        "value": 8081
+    },
+    "secCertificateThumbprint": {
+      "value": "6F8DF17647EF8E74F38C592AD9CFEBB667B662BC"
+    },
+    "secCertificateUrlValue": {
+      "value": "https://ccmsldnkv.vault.azure.net/secrets/clustersecpfx/c784930c323048e2a813264c07c4d58e"
+     },
+  }
+}
