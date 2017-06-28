@@ -6,13 +6,13 @@
       "value": "northeurope"
     },
     "clusterName": {
-      "value": "ccmsfthackldn"
+      "value": ""
     },
     "adminUserName": {
-      "value": "hackuser"
+      "value": ""
     },
     "adminPassword": {
-      "value": "ServiceF@bric"
+      "value": ""
     },
     "vmImagePublisher": {
       "value": "MicrosoftWindowsServer"
@@ -36,13 +36,13 @@
       "value": "My"
     },
     "sourceVaultvalue": {
-      "value": "/subscriptions/6bcafabb-f2b5-425d-9ffa-f59a15c80ef1/resourceGroups/ccmsldnhackpersist/providers/Microsoft.KeyVault/vaults/ccmsldnkv"
+      "value": ""
     },
     "certificateThumbprint": {
-      "value": "487108B17DB3809484B469D722AE1051D7B8D7813"
+      "value": ""
     },
     "certificateUrlvalue": {
-      "value": "https://ccmsldnkv.vault.azure.net/secrets/ccmsfthackldn/8e5b4b6e042441cda124fb7c3faca55a"
+      "value": ""
     },
     "storageAccountType": {
       "value": "Standard_LRS"
@@ -60,7 +60,7 @@
       "value": 3
     },
     "omsWorkspacename": {
-      "value": "ccmsfthackldnoms"
+      "value": ""
     },
     "sfReverseProxyPort": {
         "value": 8081
