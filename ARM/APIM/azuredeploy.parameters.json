@@ -3,22 +3,22 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
 		"apimInstanceName": {
-		  "value": "ccmsfthackldn"
+		  "value": ""
 		},
 		"apimDnsName": {
-		  "value": "ccmsfthackldnapim"
+		  "value": ""
 		},
 		"apimPublisherEmail": {
-		  "value": "lee.stead@callcreditgroup.com"
+		  "value": ""
 		},
 		"vnetName": {
-		  "value": "sf-apim-vnet"
+		  "value": ""
 		},
 		"apimSubnetName": {
-		  "value": "apim-subnet"
+		  "value": ""
 		},
 		"apimSgName": {
-		  "value": "apim-vnet-security"
+		  "value": ""
 		}
 	}
 }
