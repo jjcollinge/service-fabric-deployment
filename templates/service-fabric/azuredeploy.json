@@ -4,6 +4,7 @@
   "parameters": {
     "clusterLocation": {
       "type": "string",
+      "defaultValue": "northeurope",
       "metadata": {
         "description": "Location of the Cluster"
       }
@@ -17,7 +18,7 @@
     },
     "adminUserName": {
       "type": "string",
-      "defaultValue": "testadm",
+      "defaultValue": "azureuser",
       "metadata": {
         "description": "Remote desktop user Id"
       }
@@ -44,7 +45,7 @@
     },
     "vmImageSku": {
       "type": "string",
-      "defaultValue": "2012-R2-Datacenter",
+      "defaultValue": "2016-Datacenter-with-containers",
       "metadata": {
         "description": "VM image SKU"
       }
@@ -56,13 +57,6 @@
         "description": "VM image version"
       }
     },
-    "loadBalancedAppPort1": {
-      "type": "int",
-      "defaultValue": 80,
-      "metadata": {
-        "description": "Input endpoint1 for the application to use. Replace it with what your application uses"
-      }
-    },
     "clusterProtectionLevel": {
       "type": "string",
       "allowedValues": [
@@ -72,7 +66,7 @@
       ],
       "defaultValue": "EncryptAndSign",
       "metadata": {
-        "description": "Protection level.Three values are allowed - EncryptAndSign, Sign, None. It is best to keep the default of EncryptAndSign, unless you have a need not to"
+        "description": "Protection level. Three values are allowed - EncryptAndSign, Sign, None. It is best to keep the default of EncryptAndSign, unless you have a need not to"
       }
     },
     "certificateStoreValue": {
@@ -132,11 +126,25 @@
         "description": "Instance count for node type"
       }
     },
+    "nt0InstanceSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2_V2",
+      "metadata": {
+        "description": "VM instance sku size"
+      }
+    },
     "nt1InstanceCount": {
       "type": "int",
       "defaultValue": 7,
       "metadata": {
         "description": "Instance count for node type"
+      }
+    },
+    "nt1InstanceSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2_V2",
+      "metadata": {
+        "description": "VM instance sku size"
       }
     },
     "nt2InstanceCount": {
@@ -146,10 +154,17 @@
         "description": "Instance count for node type"
       }
     },
+    "nt2InstanceSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2_V2",
+      "metadata": {
+        "description": "VM instance sku size"
+      }
+    },
     "omsWorkspacename": {
       "type": "string",
       "metadata": {
-        "description": "Name of your OMS Log Analytics Workspace"
+        "description": "Unique name for your OMS Log Analytics Workspace"
       }
     },
     "omsRegion": {
@@ -164,11 +179,29 @@
         "description": "Specify the Azure Region for your OMS workspace"
       }
     },
-    "sfReverseProxyPort": {
+    "ReverseProxyPort": {
       "type": "int",
-      "defaultValue": 8081,
+      "defaultValue": 80,
       "metadata": {
         "description": "Endpoint for Service Fabric Reverse proxy"
+      }
+    },
+    "activeDirectoryTenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory tenant id"
+      }
+    },
+    "activeDirectoryClusterApplication": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory cluster application id"
+      }
+    },
+    "activeDirectoryClientApplication": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory cluster client id"
       }
     }
   },
@@ -189,7 +222,7 @@
     "maxPercentUpgradeDomainDeltaUnhealthyNodes": "100",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
     "overProvision": "false",
-    "vmssApiVersion": "2016-03-30",
+    "vmssApiVersion": "2016-04-30-preview",
     "lbApiVersion": "2015-06-15",
     "vNetApiVersion": "2015-06-15",
     "storageApiVersion": "2016-01-01",
@@ -229,15 +262,6 @@
     "lbHttpProbeID0": "[concat(variables('lbID0'),'/probes/FabricHttpGatewayProbe')]",
     "lbNatPoolID0": "[concat(variables('lbID0'),'/inboundNatPools/LoadBalancerBEAddressNatPool')]",
     "vmNodeType0Name": "[toLower(concat('SF', variables('vmName')))]",
-    "vmNodeType0Size": "Standard_D2_V2",
-    "vmStorageAccountName0": "[toLower(concat(uniqueString(resourceGroup().id), '1', '0' ))]",
-    "uniqueStringArray0": [
-      "[concat(variables('vmStorageAccountName0'), '0')]",
-      "[concat(variables('vmStorageAccountName0'), '1')]",
-      "[concat(variables('vmStorageAccountName0'), '2')]",
-      "[concat(variables('vmStorageAccountName0'), '3')]",
-      "[concat(variables('vmStorageAccountName0'), '4')]"
-    ],
     "lbID1": "[resourceId('Microsoft.Network/loadBalancers',concat('LB','-', parameters('clusterName'),'-',variables('vmNodeType1Name')))]",
     "lbIPConfig1": "[concat(variables('lbID1'),'/frontendIPConfigurations/LoadBalancerIPConfig')]",
     "lbPoolID1": "[concat(variables('lbID1'),'/backendAddressPools/LoadBalancerBEAddressPool')]",
@@ -245,15 +269,6 @@
     "lbHttpProbeID1": "[concat(variables('lbID1'),'/probes/FabricHttpGatewayProbe')]",
     "lbNatPoolID1": "[concat(variables('lbID1'),'/inboundNatPools/LoadBalancerBEAddressNatPool')]",
     "vmNodeType1Name": "[toLower(concat('NT1', variables('vmName')))]",
-    "vmNodeType1Size": "Standard_D2_V2",
-    "vmStorageAccountName1": "[toLower(concat(uniqueString(resourceGroup().id), '1', '1' ))]",
-    "uniqueStringArray1": [
-      "[concat(variables('vmStorageAccountName1'), '0')]",
-      "[concat(variables('vmStorageAccountName1'), '1')]",
-      "[concat(variables('vmStorageAccountName1'), '2')]",
-      "[concat(variables('vmStorageAccountName1'), '3')]",
-      "[concat(variables('vmStorageAccountName1'), '4')]"
-    ],
     "lbID2": "[resourceId('Microsoft.Network/loadBalancers',concat('LB','-', parameters('clusterName'),'-',variables('vmNodeType2Name')))]",
     "lbIPConfig2": "[concat(variables('lbID2'),'/frontendIPConfigurations/LoadBalancerIPConfig')]",
     "lbPoolID2": "[concat(variables('lbID2'),'/backendAddressPools/LoadBalancerBEAddressPool')]",
@@ -261,21 +276,13 @@
     "lbHttpProbeID2": "[concat(variables('lbID2'),'/probes/FabricHttpGatewayProbe')]",
     "lbNatPoolID2": "[concat(variables('lbID2'),'/inboundNatPools/LoadBalancerBEAddressNatPool')]",
     "vmNodeType2Name": "[toLower(concat('NT2', variables('vmName')))]",
-    "vmNodeType2Size": "Standard_D2_V2",
-    "vmStorageAccountName2": "[toLower(concat(uniqueString(resourceGroup().id), '1', '2' ))]",
-    "uniqueStringArray2": [
-      "[concat(variables('vmStorageAccountName2'), '0')]",
-      "[concat(variables('vmStorageAccountName2'), '1')]",
-      "[concat(variables('vmStorageAccountName2'), '2')]",
-      "[concat(variables('vmStorageAccountName2'), '3')]",
-      "[concat(variables('vmStorageAccountName2'), '4')]"
-    ],
     "applicationDiagnosticsStorageAccountType": "Standard_LRS",
     "applicationDiagnosticsStorageAccountName": "[toLower(concat('oms', uniqueString(resourceGroup().id), '3' ))]",
     "solution": "[Concat('ServiceFabric', '(', parameters('omsWorkspacename'), ')')]",
     "solutionsecurity": "[concat('Security', '(', parameters('omsWorkspacename'), ')')]",
     "solutionName": "ServiceFabric",
-    "securitysolution": "Security"
+    "securitysolution": "Security",
+    "applicationInsightsName": "[toLower(concat('ai', uniqueString(resourceGroup().id), '3' ))]"
   },
   "resources": [
     {
@@ -439,36 +446,17 @@
             }
           },
           {
-            "name": "AppPortLBRule1",
+            "name": "LBReverseProxyRule",
             "properties": {
               "backendAddressPool": {
                 "id": "[variables('lbPoolID0')]"
               },
-              "backendPort": "[parameters('loadBalancedAppPort1')]",
+              "backendPort": "[parameters('reverseProxyPort')]",
               "enableFloatingIP": "false",
               "frontendIPConfiguration": {
                 "id": "[variables('lbIPConfig0')]"
               },
-              "frontendPort": "[parameters('loadBalancedAppPort1')]",
-              "idleTimeoutInMinutes": "5",
-              "probe": {
-                "id": "[concat(variables('lbID0'),'/probes/AppPortProbe1')]"
-              },
-              "protocol": "tcp"
-            }
-          },
-          {
-            "name": "LBSFReverseProxyRule",
-            "properties": {
-              "backendAddressPool": {
-                "id": "[variables('lbPoolID0')]"
-              },
-              "backendPort": "[parameters('sfReverseProxyPort')]",
-              "enableFloatingIP": "false",
-              "frontendIPConfiguration": {
-                "id": "[variables('lbIPConfig0')]"
-              },
-              "frontendPort": "[parameters('sfReverseProxyPort')]",
+              "frontendPort": "[parameters('reverseProxyPort')]",
               "idleTimeoutInMinutes": "5",
               "probe": {
                 "id": "[concat(variables('lbID0'),'/probes/SFReverseProxyProbe')]"
@@ -483,7 +471,7 @@
             "properties": {
               "intervalInSeconds": 5,
               "numberOfProbes": 2,
-              "port": "[parameters('sfReverseProxyPort')]",
+              "port": "[parameters('reverseProxyPort')]",
               "protocol": "tcp"
             }
           },
@@ -502,15 +490,6 @@
               "intervalInSeconds": 5,
               "numberOfProbes": 2,
               "port": "[variables('nt0fabricHttpGatewayPort')]",
-              "protocol": "tcp"
-            }
-          },
-          {
-            "name": "AppPortProbe1",
-            "properties": {
-              "intervalInSeconds": 5,
-              "numberOfProbes": 2,
-              "port": "[parameters('loadBalancedAppPort1')]",
               "protocol": "tcp"
             }
           }
@@ -655,25 +634,11 @@
             "comments": "allow RDP within the net"
           },
           {
-            "name": "allowAppPort1",
-            "properties": {
-              "access": "Allow",
-              "destinationAddressPrefix": "*",
-              "destinationPortRange": "[parameters('loadBalancedAppPort1')]",
-              "direction": "Inbound",
-              "priority": 2001,
-              "protocol": "*",
-              "sourceAddressPrefix": "*",
-              "sourcePortRange": "*"
-            },
-            "comments": "allow public application port 1"
-          },
-          {
             "name": "allowReverseProxy",
             "properties": {
               "access": "Allow",
               "destinationAddressPrefix": "*",
-              "destinationPortRange": "[parameters('sfReverseProxyPort')]",
+              "destinationPortRange": "[parameters('reverseProxyPort')]",
               "direction": "Inbound",
               "priority": 2002,
               "protocol": "*",
@@ -690,37 +655,12 @@
       }
     },
     {
-      "apiVersion": "[variables('storageApiVersion')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('uniqueStringArray0')[copyIndex()]]",
-      "location": "[variables('computeLocation')]",
-      "dependsOn": [],
-      "properties": {},
-      "copy": {
-        "name": "storageLoop",
-        "count": 5
-      },
-      "kind": "Storage",
-      "sku": {
-        "name": "[parameters('storageAccountType')]"
-      },
-      "tags": {
-        "resourceType": "Service Fabric",
-        "clusterName": "[parameters('clusterName')]"
-      }
-    },
-    {
       "apiVersion": "[variables('vmssApiVersion')]",
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[variables('vmNodeType0Name')]",
       "location": "[variables('computeLocation')]",
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[0])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[1])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[2])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[3])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[4])]",
         "[concat('Microsoft.Network/loadBalancers/', concat('LB','-', parameters('clusterName'),'-',variables('vmNodeType0Name')))]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('supportLogStorageAccountName'))]"
       ],
@@ -822,7 +762,7 @@
                         "Sink": [
                           {
                             "name": "applicationInsights",
-                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),'ai1234')), '2014-04-01').InstrumentationKey]"
+                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),variables('applicationInsightsName'))), '2014-04-01').InstrumentationKey]"
                           }
                         ]
                       }
@@ -890,14 +830,9 @@
               "version": "[parameters('vmImageVersion')]"
             },
             "osDisk": {
-              "vhdContainers": [
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[0]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[1]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[2]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[3]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray0')[4]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]"
-              ],
-              "name": "vmssosdisk",
+              "managedDisk": {
+                "storageAccountType": "[parameters('storageAccountType')]"
+              },
               "caching": "ReadOnly",
               "createOption": "FromImage"
             }
@@ -905,7 +840,7 @@
         }
       },
       "sku": {
-        "name": "[variables('vmNodeType0Size')]",
+        "name": "[parameters('nt0InstanceSize')]",
         "capacity": "[parameters('nt0InstanceCount')]",
         "tier": "Standard"
       },
@@ -995,36 +930,17 @@
             }
           },
           {
-            "name": "AppPortLBRule1",
+            "name": "LBReverseProxyRule",
             "properties": {
               "backendAddressPool": {
                 "id": "[variables('lbPoolID1')]"
               },
-              "backendPort": "[parameters('loadBalancedAppPort1')]",
+              "backendPort": "[parameters('reverseProxyPort')]",
               "enableFloatingIP": "false",
               "frontendIPConfiguration": {
                 "id": "[variables('lbIPConfig1')]"
               },
-              "frontendPort": "[parameters('loadBalancedAppPort1')]",
-              "idleTimeoutInMinutes": "5",
-              "probe": {
-                "id": "[concat(variables('lbID1'),'/probes/AppPortProbe1')]"
-              },
-              "protocol": "tcp"
-            }
-          },
-          {
-            "name": "LBSFReverseProxyRule",
-            "properties": {
-              "backendAddressPool": {
-                "id": "[variables('lbPoolID1')]"
-              },
-              "backendPort": "[parameters('sfReverseProxyPort')]",
-              "enableFloatingIP": "false",
-              "frontendIPConfiguration": {
-                "id": "[variables('lbIPConfig1')]"
-              },
-              "frontendPort": "[parameters('sfReverseProxyPort')]",
+              "frontendPort": "[parameters('reverseProxyPort')]",
               "idleTimeoutInMinutes": "5",
               "probe": {
                 "id": "[concat(variables('lbID1'),'/probes/SFReverseProxyProbe')]"
@@ -1039,7 +955,7 @@
             "properties": {
               "intervalInSeconds": 5,
               "numberOfProbes": 2,
-              "port": "[parameters('sfReverseProxyPort')]",
+              "port": "[parameters('reverseProxyPort')]",
               "protocol": "tcp"
             }
           },
@@ -1058,15 +974,6 @@
               "intervalInSeconds": 5,
               "numberOfProbes": 2,
               "port": "[variables('nt1fabricHttpGatewayPort')]",
-              "protocol": "tcp"
-            }
-          },
-          {
-            "name": "AppPortProbe1",
-            "properties": {
-              "intervalInSeconds": 5,
-              "numberOfProbes": 2,
-              "port": "[parameters('loadBalancedAppPort1')]",
               "protocol": "tcp"
             }
           }
@@ -1211,25 +1118,11 @@
             "comments": "allow RDP within the net"
           },
           {
-            "name": "allowAppPort1",
-            "properties": {
-              "access": "Allow",
-              "destinationAddressPrefix": "*",
-              "destinationPortRange": "[parameters('loadBalancedAppPort1')]",
-              "direction": "Inbound",
-              "priority": 2001,
-              "protocol": "*",
-              "sourceAddressPrefix": "*",
-              "sourcePortRange": "*"
-            },
-            "comments": "allow public application port 1"
-          },
-          {
             "name": "allowReverseProxy",
             "properties": {
               "access": "Allow",
               "destinationAddressPrefix": "*",
-              "destinationPortRange": "[parameters('sfReverseProxyPort')]",
+              "destinationPortRange": "[parameters('reverseProxyPort')]",
               "direction": "Inbound",
               "priority": 2002,
               "protocol": "*",
@@ -1246,37 +1139,12 @@
       }
     },
     {
-      "apiVersion": "[variables('storageApiVersion')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('uniqueStringArray1')[copyIndex()]]",
-      "location": "[variables('computeLocation')]",
-      "dependsOn": [],
-      "properties": {},
-      "copy": {
-        "name": "storageLoop",
-        "count": 5
-      },
-      "kind": "Storage",
-      "sku": {
-        "name": "[parameters('storageAccountType')]"
-      },
-      "tags": {
-        "resourceType": "Service Fabric",
-        "clusterName": "[parameters('clusterName')]"
-      }
-    },
-    {
       "apiVersion": "[variables('vmssApiVersion')]",
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[variables('vmNodeType1Name')]",
       "location": "[variables('computeLocation')]",
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[0])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[1])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[2])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[3])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[4])]",
         "[concat('Microsoft.Network/loadBalancers/', concat('LB','-', parameters('clusterName'),'-',variables('vmNodeType1Name')))]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('supportLogStorageAccountName'))]"
       ],
@@ -1378,7 +1246,7 @@
                         "Sink": [
                           {
                             "name": "applicationInsights",
-                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),'ai1234')), '2014-04-01').InstrumentationKey]"
+                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),variables('applicationInsightsName'))), '2014-04-01').InstrumentationKey]"
                           }
                         ]
                       }
@@ -1446,14 +1314,9 @@
               "version": "[parameters('vmImageVersion')]"
             },
             "osDisk": {
-              "vhdContainers": [
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[0]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[1]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[2]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[3]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray1')[4]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]"
-              ],
-              "name": "vmssosdisk",
+              "managedDisk": {
+                "storageAccountType": "[parameters('storageAccountType')]"
+              },
               "caching": "ReadOnly",
               "createOption": "FromImage"
             }
@@ -1461,7 +1324,7 @@
         }
       },
       "sku": {
-        "name": "[variables('vmNodeType1Size')]",
+        "name": "[parameters('nt1InstanceSize')]",
         "capacity": "[parameters('nt1InstanceCount')]",
         "tier": "Standard"
       },
@@ -1551,36 +1414,17 @@
             }
           },
           {
-            "name": "AppPortLBRule1",
+            "name": "LBReverseProxyRule",
             "properties": {
               "backendAddressPool": {
                 "id": "[variables('lbPoolID2')]"
               },
-              "backendPort": "[parameters('loadBalancedAppPort1')]",
+              "backendPort": "[parameters('reverseProxyPort')]",
               "enableFloatingIP": "false",
               "frontendIPConfiguration": {
                 "id": "[variables('lbIPConfig2')]"
               },
-              "frontendPort": "[parameters('loadBalancedAppPort1')]",
-              "idleTimeoutInMinutes": "5",
-              "probe": {
-                "id": "[concat(variables('lbID2'),'/probes/AppPortProbe1')]"
-              },
-              "protocol": "tcp"
-            }
-          },
-          {
-            "name": "LBSFReverseProxyRule",
-            "properties": {
-              "backendAddressPool": {
-                "id": "[variables('lbPoolID2')]"
-              },
-              "backendPort": "[parameters('sfReverseProxyPort')]",
-              "enableFloatingIP": "false",
-              "frontendIPConfiguration": {
-                "id": "[variables('lbIPConfig2')]"
-              },
-              "frontendPort": "[parameters('sfReverseProxyPort')]",
+              "frontendPort": "[parameters('reverseProxyPort')]",
               "idleTimeoutInMinutes": "5",
               "probe": {
                 "id": "[concat(variables('lbID2'),'/probes/SFReverseProxyProbe')]"
@@ -1595,7 +1439,7 @@
             "properties": {
               "intervalInSeconds": 5,
               "numberOfProbes": 2,
-              "port": "[parameters('sfReverseProxyPort')]",
+              "port": "[parameters('reverseProxyPort')]",
               "protocol": "tcp"
             }
           },
@@ -1614,15 +1458,6 @@
               "intervalInSeconds": 5,
               "numberOfProbes": 2,
               "port": "[variables('nt2fabricHttpGatewayPort')]",
-              "protocol": "tcp"
-            }
-          },
-          {
-            "name": "AppPortProbe1",
-            "properties": {
-              "intervalInSeconds": 5,
-              "numberOfProbes": 2,
-              "port": "[parameters('loadBalancedAppPort1')]",
               "protocol": "tcp"
             }
           }
@@ -1654,6 +1489,20 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
+          {
+            "name": "allowNt1Traffic",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*",
+              "direction": "Inbound",
+              "priority": 1500,
+              "protocol": "*",
+              "sourceAddressPrefix": "193.150.3.0/24",
+              "sourcePortRange": "*"
+            },
+            "comments": "allow node type 2 (pci) to talk to node type 2 (non-pci)"
+          },
           {
             "name": "allowSvcFabSMB",
             "properties": {
@@ -1767,25 +1616,11 @@
             "comments": "allow RDP within the net"
           },
           {
-            "name": "allowAppPort1",
-            "properties": {
-              "access": "Allow",
-              "destinationAddressPrefix": "*",
-              "destinationPortRange": "[parameters('loadBalancedAppPort1')]",
-              "direction": "Inbound",
-              "priority": 2001,
-              "protocol": "*",
-              "sourceAddressPrefix": "*",
-              "sourcePortRange": "*"
-            },
-            "comments": "allow public application port 1"
-          },
-          {
             "name": "allowReverseProxy",
             "properties": {
               "access": "Allow",
               "destinationAddressPrefix": "*",
-              "destinationPortRange": "[parameters('sfReverseProxyPort')]",
+              "destinationPortRange": "[parameters('reverseProxyPort')]",
               "direction": "Inbound",
               "priority": 2002,
               "protocol": "*",
@@ -1802,37 +1637,12 @@
       }
     },
     {
-      "apiVersion": "[variables('storageApiVersion')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('uniqueStringArray2')[copyIndex()]]",
-      "location": "[variables('computeLocation')]",
-      "dependsOn": [],
-      "properties": {},
-      "copy": {
-        "name": "storageLoop",
-        "count": 5
-      },
-      "kind": "Storage",
-      "sku": {
-        "name": "[parameters('storageAccountType')]"
-      },
-      "tags": {
-        "resourceType": "Service Fabric",
-        "clusterName": "[parameters('clusterName')]"
-      }
-    },
-    {
       "apiVersion": "[variables('vmssApiVersion')]",
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[variables('vmNodeType2Name')]",
       "location": "[variables('computeLocation')]",
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[0])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[1])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[2])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[3])]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[4])]",
         "[concat('Microsoft.Network/loadBalancers/', concat('LB','-', parameters('clusterName'),'-',variables('vmNodeType2Name')))]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('supportLogStorageAccountName'))]"
       ],
@@ -1934,7 +1744,7 @@
                         "Sink": [
                           {
                             "name": "applicationInsights",
-                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),'ai1234')), '2014-04-01').InstrumentationKey]"
+                            "ApplicationInsights": "[reference(resourceId('Microsoft.Insights/components/', concat(parameters('clusterName'),variables('applicationInsightsName'))), '2014-04-01').InstrumentationKey]"
                           }
                         ]
                       }
@@ -2002,14 +1812,9 @@
               "version": "[parameters('vmImageVersion')]"
             },
             "osDisk": {
-              "vhdContainers": [
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[0]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[1]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[2]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[3]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]",
-                "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('uniqueStringArray2')[4]), variables('storageApiVersion')).primaryEndpoints.blob, variables('vmStorageAccountContainerName'))]"
-              ],
-              "name": "vmssosdisk",
+              "managedDisk": {
+                "storageAccountType": "[parameters('storageAccountType')]"
+              },
               "caching": "ReadOnly",
               "createOption": "FromImage"
             }
@@ -2017,7 +1822,7 @@
         }
       },
       "sku": {
-        "name": "[variables('vmNodeType2Size')]",
+        "name": "[parameters('nt2InstanceSize')]",
         "capacity": "[parameters('nt2InstanceCount')]",
         "tier": "Standard"
       },
@@ -2038,6 +1843,11 @@
         "certificate": {
           "thumbprint": "[parameters('certificateThumbprint')]",
           "x509StoreName": "[parameters('certificateStoreValue')]"
+        },
+        "azureActiveDirectory": {
+          "tenantId":"[parameters('activeDirectoryTenantId')]",
+          "clusterApplication":"[parameters('activeDirectoryClusterApplication')]",
+          "clientApplication":"[parameters('activeDirectoryClientApplication')]"
         },
         "clientCertificateCommonNames": [],
         "clientCertificateThumbprints": [],
@@ -2080,9 +1890,9 @@
             "httpGatewayEndpointPort": "[variables('nt0fabricHttpGatewayPort')]",
             "isPrimary": true,
             "vmInstanceCount": "[parameters('nt0InstanceCount')]",
-            "reverseProxyEndpointPort": "[parameters('sfReverseProxyPort')]",
+            "reverseProxyEndpointPort": "[parameters('reverseProxyPort')]",
             "placementProperties": {
-              "IsPCI": "true",
+              "IsPCI": "false",
               "NodeColour": "green",
               "IsDMZ": "false"
             }
@@ -2102,9 +1912,9 @@
             "httpGatewayEndpointPort": "[variables('nt1fabricHttpGatewayPort')]",
             "isPrimary": false,
             "vmInstanceCount": "[parameters('nt1InstanceCount')]",
-            "reverseProxyEndpointPort": "[parameters('sfReverseProxyPort')]",
+            "reverseProxyEndpointPort": "[parameters('reverseProxyPort')]",
             "placementProperties": {
-              "IsPCI": "false",
+              "IsPCI": "true",
               "NodeColour": "green",
               "IsDMZ": "false"
             }
@@ -2124,7 +1934,7 @@
             "httpGatewayEndpointPort": "[variables('nt2fabricHttpGatewayPort')]",
             "isPrimary": false,
             "vmInstanceCount": "[parameters('nt2InstanceCount')]",
-            "reverseProxyEndpointPort": "[parameters('sfReverseProxyPort')]",
+            "reverseProxyEndpointPort": "[parameters('reverseProxyPort')]",
             "placementProperties": {
               "IsPCI": "false",
               "NodeColour": "green",
@@ -2276,9 +2086,9 @@
       "type": "Microsoft.Insights/components",
       "apiVersion": "2014-04-01",
       "location": "[resourceGroup().location]",
-      "name": "[concat(parameters('clusterName'),'ai1234')]",
+      "name": "[concat(parameters('clusterName'),variables('applicationInsightsName'))]",
       "properties": {
-        "applicationId": "[concat(parameters('clusterName'),'ai1234')]"
+        "applicationId": "[concat(parameters('clusterName'),variables('applicationInsightsName'))]"
       }
     },
     {

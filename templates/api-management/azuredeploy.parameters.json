@@ -17,7 +17,7 @@
 		"apimSubnetName": {
 		  "value": ""
 		},
-		"apimSgName": {
+		"apimNsgName": {
 		  "value": ""
 		}
 	}

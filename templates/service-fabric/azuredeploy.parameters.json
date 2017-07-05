@@ -3,16 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "clusterLocation": {
-      "value": "northeurope"
+      "value": "westeurope"
     },
     "clusterName": {
-      "value": ""
+      "value": "dotjsonasf"
     },
     "adminUserName": {
-      "value": ""
+      "value": "azureuser"
     },
     "adminPassword": {
-      "value": ""
+      "value": "AbcAbc123123!"
     },
     "vmImagePublisher": {
       "value": "MicrosoftWindowsServer"
@@ -26,9 +26,6 @@
     "vmImageVersion": {
       "value": "latest"
     },
-    "loadBalancedAppPort1": {
-      "value": 80
-    },
     "clusterProtectionLevel": {
       "value": "EncryptAndSign"
     },
@@ -36,13 +33,13 @@
       "value": "My"
     },
     "sourceVaultvalue": {
-      "value": ""
+      "value": "/subscriptions/04f7ec88-8e28-41ed-8537-5e17766001f5/resourceGroups/dotjson-asf-static/providers/Microsoft.KeyVault/vaults/dotjsonkv"
     },
     "certificateThumbprint": {
-      "value": ""
+      "value": "CB4BD1257EB29B9528530D86DAAE4331AD265E65"
     },
     "certificateUrlvalue": {
-      "value": ""
+      "value": "https://dotjsonkv.vault.azure.net:443/secrets/asfcert/d5264f6fed2d4f109dbfeb7e34e3bd54"
     },
     "storageAccountType": {
       "value": "Standard_LRS"
@@ -50,20 +47,38 @@
     "supportLogStorageAccountType": {
       "value": "Standard_LRS"
     },
+    "omsWorkspacename": {
+      "value": "dotjsonoms"
+    },
     "nt0InstanceCount": {
       "value": 5
+    },
+    "nt0InstanceSize": {
+      "value": "Standard_D2_V2"
     },
     "nt1InstanceCount": {
       "value": 3
     },
+    "nt1InstanceSize": {
+      "value": "Standard_D2_V2"
+    },
     "nt2InstanceCount": {
       "value": 3
     },
-    "omsWorkspacename": {
-      "value": ""
+    "nt2InstanceSize": {
+      "value": "Standard_D2_V2"
     },
-    "sfReverseProxyPort": {
-        "value": 8081
+    "reverseProxyPort": {
+        "value": 80
+    },
+    "activeDirectoryTenantId": {
+        "value": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+    },
+    "activeDirectoryClusterApplication": {
+        "value": "9760b17e-5f40-4b19-8498-52ffda6c3591"
+    },
+    "activeDirectoryClientApplication": {
+        "value": "e5d4efe0-6a08-4750-9771-a9e03b8c7922"
     }
   }
 }

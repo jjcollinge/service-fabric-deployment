@@ -23,7 +23,7 @@
       "defaultValue": "2017-03-01",
       "type": "string"
     },
-    "apimSgName": {
+    "apimNsgName": {
       "defaultValue": "apim-vnet-security",
       "type": "string"
     },
@@ -77,7 +77,7 @@
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('apimSgName')]",
+      "name": "[parameters('apimNsgName')]",
       "apiVersion": "[parameters('apimSgVersion')]",
       "location": "[variables('location')]",
       "properties": {
