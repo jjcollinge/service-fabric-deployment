@@ -11,5 +11,7 @@ Once the script has completed, you need to grab the output values for:
 `clusterApplication` \
 `clientApplication`
 
+Now you need to add your users and groups to your registered application in Azure Active Directory.
+
 ##### Credit
 https://blogs.msdn.microsoft.com/ncdevguy/2017/01/09/securing-an-azure-service-fabric-cluster-with-azure-active-directory-via-the-azure-portal-2/

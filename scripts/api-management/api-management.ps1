@@ -18,7 +18,7 @@ Param(
   [string]
   $AdminEmail,
   [string]
-  $Sku="Standard",
+  $Sku="Premium",
   [string]
   $VpnType="External",
   [string]
@@ -35,11 +35,11 @@ Catch {
     Select-AzureRmSubscription -SubscriptionId $AzureSubscriptionId
 }
 
-$apimService = New-AzureRmApiManagement -ResourceGroupName $AzureResourceGroupName `
+New-AzureRmApiManagement -ResourceGroupName $AzureResourceGroupName `
                                         -Location $AzureResourceGroupLocation `
                                         -Name $ApimName `
                                         -Organization $Organization `
                                         -AdminEmail $AdminEmail `
                                         -VirtualNetwork $apimVirtualNetwork `
                                         -VpnType $VpnType `
-                                        -Sku $Sku 2>&1 | Out-File C:\apim.txt -Append
+                                        -Sku $Sku 2>&1 | Out-File apim.txt -Append
