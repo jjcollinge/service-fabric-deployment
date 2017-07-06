@@ -66,7 +66,7 @@ Try
     New-AzureRmKeyVault -VaultName $KeyVaultName -ResourceGroupName $AzureResourceGroupName -Location $AzureResourceGroupLocation -EnabledForDeployment -EnabledForTemplateDeployment -Tag @{ Set="cc123"; Environment="Dev" } -ErrorAction Stop
 }
 Catch {
-    Write-Error "Error: $_.Exception.Message"
+    echo $_.Exception|format-list -force
     exit
 }
 
@@ -74,7 +74,7 @@ Catch {
 if (Test-Path Service-Fabric) {
     Remove-Item -Recurse -Force Service-Fabric
 }
-echo "Installing helper modules"
+echo "Installing Helper Module"
 git clone https://github.com/ChackDan/Service-Fabric.git
 Unblock-File -Path .\Service-Fabric\Scripts\ServiceFabricRPHelpers\ServiceFabricRPHelpers.psm1
 Import-Module .\Service-Fabric\Scripts\ServiceFabricRPHelpers\ServiceFabricRPHelpers.psm1

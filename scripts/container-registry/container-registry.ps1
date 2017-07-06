@@ -25,6 +25,4 @@ echo "Starting Azure Container Registry Deployment"
 New-AzureRmResourceGroupDeployment -Name "acrdeploy" `
                                    -ResourceGroupName $AzureResourceGroupName `
                                    -TemplateFile $TemplateFile `
-                                   -TemplateParameterFile $TemplateParametersFile `
-                                   -acrName $AcrName `
-                                   -acr
+                                   -TemplateParameterFile $TemplateParametersFile

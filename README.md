@@ -1,7 +1,7 @@
 ## Service Fabric Deployment
 This repo contains some templates and script to deploy a specific Service Fabric topology to Azure.
 
-The cluster that will be deployed will have the following components:
+The cluster that will be deployed will have the following properties:
 * 3 distinct cluster node types with dedicated
     * Azure Load Balancers
     * Subnets
@@ -19,16 +19,83 @@ The cluster that will be deployed will have the following components:
 * Private Azure Container Registry
 
 This setup is split across 2 resources groups.
-* Peripheral resources which potentially out live a cluster deployment
-* Core cluster resources that require strong coupling to the cluster's life cycle
+* Peripheral resources which can potentially out live a cluster deployment.
+* Core cluster resources that require strong coupling to the cluster's life cycle.
 
-To deploy these components, you must visit the sub README files **in the following order**.
+<img src="images/service-fabric.png" />
 
-1. [Azure Key Vault](scripts/key-vault/README.md)
-2. [Azure Active Directory](scripts/active-directory/README.md)
-3. [Azure Service Fabric](scripts/service-fabric/README.md)
-4. [Azure API Management](scripts/api-management/README.md)
-5. (Optional)[Azure Container Registry](scripts/container-registry/README.md)
+To deploy these components, you must follow **the following instructions, in order**.
+
+1. Copy the example environment file to you local environment file.
+```
+cp env.example.ps1 env.ps1
+```
+2. Edit env.ps1 and provide a value for each key
+3. Source the environment variable file
+```
+. env.ps1
+```
+4. Deploy an Azure Key Vault with self-signed certificate
+```
+.\scripts\key-vault\key-vault.ps1 `
+-AzureSubscriptionId $subId `
+-AzureResourceGroupName $extRgName `
+-AzureResourceGroupLocation $extRgLoc `
+-KeyVaultName $kvName `
+-CertDnsName $clusterName `
+-CertName $certName `
+-Password $certPassword
+```
+5. Create an Application Registration in your Azure Active Directory tenant.
+```
+.\scripts\active-directory\SetupApplications.ps1 `
+-TenantId $aadTenantId `
+-ClusterName "$clusterName.$clusterRgLoc.cloudapp.azure.com" `
+-WebApplicationReplyUrl "https://$clusterName.$clusterRgLoc.cloudapp.azure.com:19080/Explorer/index.html"
+```
+Record the output values for the following properties in a file:
+`tenantId` \
+`clusterApplication` \
+`clientApplication`
+
+6. Add yourself and others as users and groups within your Azure Active Directory Application Registration. This can been done through the portal https://portal.azure.com.
+
+7. Edit the parameters file: `templates\service-fabric\azuredeploy.parameters.json`. Modify the parameters to match your desired cluster configuration. Key Vault details can be found in the text file `key-vault.txt` and Active Directory details were output in step 5.
+
+8. Deploy the Azure Service Fabric cluster.
+```
+.\scripts\service-fabric\service-fabric.ps1 `
+-AzureSubscriptionId $subId `
+-AzureResourceGroupName $clusterRgName `
+-AzureResourceGroupLocation $clusterRgLoc
+```
+Beware, this may take a little while.
+
+9. Deploy an API Management instance to facade your cluster's APIs
+```
+.\scripts\api-management\api-management.ps1 `
+ -AzureSubscriptionId $subId `
+ -DeployToResourceGroupName $extRgName `
+ -AzureResourceGroupLocation $extRgLoc `
+ -ApimName $apimName `
+ -VnetResourceGroupName $clusterRgName `
+ -Organization $apimOrg `
+ -AdminEmail $apimAdminEmail
+```
+Note, this should attach to your cluster's virtual network. If it doesn't manual connect it to the APIM subnet on the 'VNet' virtual network.
+
+10. If you plan to deploy Windows Container service to Service Fabric you'll probably want a private Azure Container Registry.
+Edit the template parameters file: `templates\continer-registry\azuredeploy.parameters.json`.
+
+11. Deploy the Azure Container Registry.
+
+```
+./container-registry.ps1 `
+-AzureSubscriptionId $subId `
+-AzureResourceGroupName $extRgName
+```
+
+12. Once all the deployments have completed successfully, you can grab your Service Fabric endpoint from the portal or the `service-fabric.txt` file. 
 
 ### Notes:
-API Management Virtual Network integration is not currently supported - this feature will be enabled once the address space range has been redesigned.
+Although API Management will connect to the same virtual network as your cluster. The cluster's node types are currently exposed via an external load balancer and thus don't take route the traffic internally. This will be changed soon to allow the node types to only accept traffic on the virtual network.
