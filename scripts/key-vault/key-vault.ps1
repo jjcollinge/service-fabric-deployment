@@ -84,15 +84,14 @@ Catch {
 }
 
 # Download PowerShell helper modules
-if (Test-Path Service-Fabric) {
-    Remove-Item -Recurse -Force Service-Fabric
+if ( -Not (Test-Path Service-Fabric )) {
+    echo "Installing Helper Module"
+    git clone https://github.com/ChackDan/Service-Fabric.git
+    Unblock-File -Path .\Service-Fabric\Scripts\ServiceFabricRPHelpers\ServiceFabricRPHelpers.psm1
+    Import-Module .\Service-Fabric\Scripts\ServiceFabricRPHelpers\ServiceFabricRPHelpers.psm1
 }
-echo "Installing Helper Module"
-git clone https://github.com/ChackDan/Service-Fabric.git
-Unblock-File -Path .\Service-Fabric\Scripts\ServiceFabricRPHelpers\ServiceFabricRPHelpers.psm1
-Import-Module .\Service-Fabric\Scripts\ServiceFabricRPHelpers\ServiceFabricRPHelpers.psm1
 
-if ( -Not (Test-Path $OutputPath )) {
+if ( -Not ( Test-Path $OutputPath )) {
     mkdir $OutputPath
 }
 
