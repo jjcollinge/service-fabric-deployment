@@ -47,4 +47,4 @@ $rand=(Get-Random -Maximum 999 -Minimum 0)
 New-AzureRmResourceGroupDeployment -Name "asfdeploy$rand" `
                                    -ResourceGroupName $AzureResourceGroupName `
                                    -TemplateFile $TemplateFile `
-                                   -TemplateParameterFile $TemplateParametersFile  2>&1 | Out-File C:\keyvault.txt -Append
+                                   -TemplateParameterFile $TemplateParametersFile  2>&1 | Out-File servie-fabric.txt -Append
