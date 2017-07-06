@@ -21,7 +21,7 @@ Param(
   [string]
   $Password,
   [string]
-  $OutputPath
+  $OutputPath="certs"
 )
 
 Function Reset() {
@@ -42,7 +42,6 @@ Function CleanUp() {
     echo "Cleaning up"
     Remove-Item -Recurse -Force Service-Fabric
 }
-
 
 # Login to Azure PowerShell CLI and set context
 Try
