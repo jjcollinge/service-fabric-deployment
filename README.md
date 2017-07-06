@@ -23,6 +23,7 @@ In order to deploy this cluster, you must visit the sub README files **in the fo
 2. [Azure Active Directory](scripts/active-directory/README.md)
 3. [Azure Service Fabric](scripts/service-fabric/README.md)
 4. [Azure API Management](scripts/api-management/README.md)
+5. (Optional)[Azure Container Registry](scripts/container-registry/README.md)
 
 ### Notes:
 API Management Virtual Network integration is not currently supported - this feature will be enabled once the address space range has been redesigned.

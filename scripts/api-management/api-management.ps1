@@ -21,8 +21,8 @@ Param(
   $Sku="Premium",
   [string]
   $VpnType="External",
-  [string]
-  $VirtualNetwork=""
+  [PSVirtualNetwork]
+  $VirtualNetwork
 )
 
 # Login to Azure PowerShell CLI and set context
