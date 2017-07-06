@@ -83,6 +83,23 @@ if ( -Not (Test-Path $outputPath )) {
     mkdir $outputPath
 }
 
+$resourceGroup=(Get-AzureRmResourceGroup -Name $AzureResourceGroupName -ev notPresent -ea 0)
+if ($notPresent)
+{
+    echo "Creating new resource group"
+    $resourceGroup=(New-AzureRmResourceGroup -Name $AzureResourceGroupName -Location $AzureResourceGroupLocation)
+} else {
+    echo "Using existing resource group"
+}
+if ($resourceGroup.ProvisioningState -eq "Deleting") {
+    echo "Error: Resource group is currently being deleted"
+    exit
+}
+if ($resourceGroup.Location -ne $AzureResourceGroupLocation) {
+    echo "Error: Resource group is not in the correct location"
+    exit
+}
+
 echo "Creating certificate and uploading it to Key Vault"
 Try
 {
