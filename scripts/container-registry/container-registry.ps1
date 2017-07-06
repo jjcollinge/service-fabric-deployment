@@ -6,9 +6,9 @@ Param(
   [string]
   $AzureResourceGroupName,
   [string]
-  $TemplateFile="../../templates/container-registry/azuredeploy.json",
+  $TemplateFile="templates/container-registry/azuredeploy.json",
   [string]
-  $TemplateParametersFile="../../templates/container-registry/azuredeploy.parameters.json"
+  $TemplateParametersFile="templates/container-registry/azuredeploy.parameters.json"
 )
 
 # Login to Azure PowerShell CLI and set context

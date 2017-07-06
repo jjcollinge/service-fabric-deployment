@@ -9,9 +9,9 @@ Param(
   [string]
   $AzureResourceGroupLocation,
   [string]
-  $TemplateFile="../../templates/service-fabric/azuredeploy.json",
+  $TemplateFile="templates/service-fabric/azuredeploy.json",
   [string]
-  $TemplateParametersFile="../../templates/service-fabric/azuredeploy.parameters.json"
+  $TemplateParametersFile="templates/service-fabric/azuredeploy.parameters.json"
 )
 
 # Login to Azure PowerShell CLI and set context
