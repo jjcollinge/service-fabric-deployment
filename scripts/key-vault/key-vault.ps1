@@ -22,25 +22,6 @@ Param(
   $Password
 )
 
-Function Reset() {
-    # Undo any actions taking during the script
-    echo "Resetting"
-    Remove-Item -Recurse -Force Service-Fabric
-    Remove-AzureRmKeyVault -VaultName $KeyVaultName -ResourceGroupName $AzureResourceGroupName -Location $AzureResourceGroupLocation -Force
-    $certificateObject = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
-    $certificateObject.Import("$OutputPath\$certPath", $Password, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::DefaultKeySet)
-    $thumbprint=$certificateObject.Thumbprint
-    Get-ChildItem "Cert:\CurrentUser\My\$thumbprint" | Remove-Item
-    Remove-Item "$OutputPath/$CertName.pfx"
-    # Do not delete resource group or cert folder as they may have existed prior to running this script
-}
-
-Function CleanUp() {
-    # Remove temporary files which are not needed after a successful run
-    echo "Cleaning up"
-    Remove-Item -Recurse -Force Service-Fabric
-}
-
 $OutputPath="$pwd/certs"
 
 # Login to Azure PowerShell CLI and set context
@@ -111,10 +92,8 @@ Try
 }
 Catch {
     echo $_.Exception|format-list -force
-    Reset
     exit
 }
 
-CleanUp
 echo "Successfully completed script"
 

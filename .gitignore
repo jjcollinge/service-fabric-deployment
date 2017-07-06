@@ -2,3 +2,4 @@ env.ps1
 scripts/key-vault/certs
 .txt
 *.parameters.json
+Service-Fabric
