@@ -17,8 +17,11 @@ Param(
   [Parameter(Mandatory=$True)]
   [string]
   $CertDnsName,
+  [Parameter(Mandatory=$True)]
   [string]
-  $Password
+  $Password,
+  [string]
+  $OutputPath
 )
 
 Function Reset() {
@@ -27,10 +30,10 @@ Function Reset() {
     Remove-Item -Recurse -Force Service-Fabric
     Remove-AzureRmKeyVault -VaultName $KeyVaultName -ResourceGroupName $AzureResourceGroupName -Location $AzureResourceGroupLocation -Force
     $certificateObject = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
-    $certificateObject.Import("$outputPath\$certPath", $Password, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::DefaultKeySet)
+    $certificateObject.Import("$OutputPath\$certPath", $Password, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::DefaultKeySet)
     $thumbprint=$certificateObject.Thumbprint
     Get-ChildItem "Cert:\CurrentUser\My\$thumbprint" | Remove-Item
-    Remove-Item "$outputPath/$CertName.pfx"
+    Remove-Item "$OutputPath/$CertName.pfx"
     # Do not delete resource group or cert folder as they may have existed prior to running this script
 }
 
@@ -89,8 +92,8 @@ git clone https://github.com/ChackDan/Service-Fabric.git
 Unblock-File -Path .\Service-Fabric\Scripts\ServiceFabricRPHelpers\ServiceFabricRPHelpers.psm1
 Import-Module .\Service-Fabric\Scripts\ServiceFabricRPHelpers\ServiceFabricRPHelpers.psm1
 
-if ( -Not (Test-Path $outputPath )) {
-    mkdir $outputPath
+if ( -Not (Test-Path $OutputPath )) {
+    mkdir $OutputPath
 }
 
 echo "Creating certificate and uploading it to Key Vault"
@@ -106,7 +109,7 @@ Try
                             -Password $Password `
                             -CreateSelfSignedCertificate `
                             -DnsName $CertDnsName `
-                            -OutputPath $outputPath 2>&1 | Out-File key-vault.txt -Append
+                            -OutputPath $OutputPath 2>&1 | Out-File key-vault.txt -Append
 }
 Catch {
     echo $_.Exception|format-list -force
