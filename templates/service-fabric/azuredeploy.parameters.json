@@ -3,16 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "clusterLocation": {
-      "value": ""
+      "value": "westeurope"
     },
     "clusterName": {
-      "value": ""
+      "value": "dotjasf"
     },
     "adminUserName": {
-      "value": ""
+      "value": "azureuser"
     },
     "adminPassword": {
-      "value": ""
+      "value": "AbcAbc123123!"
     },
     "vmImagePublisher": {
       "value": "MicrosoftWindowsServer"
@@ -33,13 +33,13 @@
       "value": "My"
     },
     "sourceVaultvalue": {
-      "value": ""
+      "value": "/subscriptions/995c6481-7ddc-4dac-afd4-33545d96cf29/resourceGroups/dotjext/providers/Microsoft.KeyVault/vaults/dotjkv"
     },
     "certificateThumbprint": {
-      "value": ""
+      "value": "13FE730EFD4D030E9E90A96C17749A99EC5EADB6"
     },
     "certificateUrlvalue": {
-      "value": ""
+      "value": "https://dotjkv.vault.azure.net:443/secrets/prim/4b46e0c6aba54fd8ae16a39df2b7faf6"
     },
     "storageAccountType": {
       "value": "Standard_LRS"
@@ -48,7 +48,7 @@
       "value": "Standard_LRS"
     },
     "omsWorkspacename": {
-      "value": ""
+      "value": "dotjoms"
     },
     "nt0InstanceCount": {
       "value": 5
@@ -72,13 +72,13 @@
         "value": 80
     },
     "activeDirectoryTenantId": {
-        "value": ""
+        "value": "72f988bf-86f1-41af-91ab-2d7cd011db47"
     },
     "activeDirectoryClusterApplication": {
-        "value": ""
+        "value": "c52126db-4d08-4c25-b91e-4a983e685003"
     },
     "activeDirectoryClientApplication": {
-        "value": ""
+        "value": "0a4eb979-8061-4a36-bc37-fb7beeeb435e"
     }
   }
 }

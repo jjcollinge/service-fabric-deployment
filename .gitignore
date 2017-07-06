@@ -1,5 +1,5 @@
 env.ps1
-scripts/key-vault/certs
+*.pfx
 .txt
 *.parameters.json
 Service-Fabric

@@ -11,18 +11,16 @@ Param(
   $TemplateParametersFile="templates/container-registry/azuredeploy.parameters.json"
 )
 
-# Login to Azure PowerShell CLI and set context
-Try
-{  
-    Select-AzureRmSubscription -SubscriptionId $AzureSubscriptionId -ErrorAction Stop
-}
-Catch {
-    Login-AzureRmAccount
-    Select-AzureRmSubscription -SubscriptionId $AzureSubscriptionId
-}
+PromptAzureLoginIfNeeded
 
 echo "Starting Azure Container Registry Deployment"
-New-AzureRmResourceGroupDeployment -Name "acrdeploy" `
+Try {
+    New-AzureRmResourceGroupDeployment -Name "acrdeploy" `
                                    -ResourceGroupName $AzureResourceGroupName `
                                    -TemplateFile $TemplateFile `
-                                   -TemplateParameterFile $TemplateParametersFile  2>&1 | Out-File C:\container-registry.txt -Append
+                                   -TemplateParameterFile $TemplateParametersFile  2>&1 | Out-File C:\container-registry.txt -ErrorAction Stop
+} Catch {
+    Write-Error $_.Exception | format-list -force
+    exit
+}
+Write-Host "Successfully completed script"

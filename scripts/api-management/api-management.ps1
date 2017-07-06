@@ -13,6 +13,9 @@ Param(
   $VNetResourceGroupName,
   [Parameter(Mandatory=$True)]
   [string]
+  $VNetResourceGroupLocation,
+  [Parameter(Mandatory=$True)]
+  [string]
   $ApimName,
   [Parameter(Mandatory=$True)]
   [string]
@@ -26,35 +29,53 @@ Param(
   $VpnType="External"
 )
 
-# Login to Azure PowerShell CLI and set context
-Try
-{  
-    Select-AzureRmSubscription -SubscriptionId $AzureSubscriptionId -ErrorAction Stop
-}
-Catch {
-    Login-AzureRmAccount
-    Select-AzureRmSubscription -SubscriptionId $AzureSubscriptionId
+PromptAzureLoginIfNeeded
+
+ResourceGroupCreateIfNotExist -ResourceGroupName $AzureResourceGroupName -ResourceGroupLocation $AzureResourceGroupLocation
+Try {
+    ResourceGroupFailIfNotExist -ResourceGroupName $VNetResourceGroupName -ResourceGroupLocation $VNetResourceGroupLocation
+} Catch {
+    Write-Error $_.Exception | format-list -force
+    exit
 }
 
-echo "Getting existing Virtual Network"
-$vnet=(Get-AzureRmVirtualNetwork -ResourceName VNet -ResourceGroupName $VNetResourceGroupName)
+Write-Host "Getting existing virtual network"
+$vnet=(Get-AzureRmVirtualNetwork -ResourceName VNet -ResourceGroupName $VNetResourceGroupName -ErrorAction SilentlyContinue)
+if (-Not($vnet)) {
+    Write-Error "Could not get existing virtual network"
+    exit
+}
 
-echo "Getting existing API Management subnet"
+Write-Host "Getting existing API Management subnet"
 $apimSubnet=(Get-AzureRmVirtualNetworkSubnetConfig -Name APIM -VirtualNetwork $vnet -ErrorAction SilentlyContinue)
-if ( -Not($apimSubnet)) {
-    echo "API Management subnet does not exists, I'll create it now"
+if (-Not($apimSubnet )) {
+    Write-Host "API Management subnet does not already exists, creating it now"
     Add-AzureRmVirtualNetworkSubnetConfig -Name APIM -VirtualNetwork $vnet -AddressPrefix 192.168.4.0/24
-    $vnet=(Set-AzureRmVirtualNetwork -VirtualNetwork $vnet)
-    $apimSubnet=(Get-AzureRmVirtualNetworkSubnetConfig -Name APIM -VirtualNetwork $vnet)
+    Try {
+        $vnet=(Set-AzureRmVirtualNetwork -VirtualNetwork $vnet)
+        $apimSubnet=(Get-AzureRmVirtualNetworkSubnetConfig -Name APIM -VirtualNetwork $vnet)
+    } Catch {
+        Write-Error $_.Exception | format-list -force
+        exit
+    }
 }
+
+Write-Host "Using API Management Subnet: $apimSubnet.Id"
 $apimVnet=(New-AzureRmApiManagementVirtualNetwork -Location $DeployToResourceGroupName -SubnetResourceId $apimSubnet.Id)
 
-echo "Deploying new API Management instance"
-New-AzureRmApiManagement -ResourceGroupName $DeployToResourceGroupName `
-                                        -Location $DeployToResourceGroupLocation `
-                                        -Name $ApimName `
-                                        -Organization $Organization `
-                                        -AdminEmail $AdminEmail `
-                                        -VirtualNetwork $apimVnet `
-                                        -VpnType $VpnType `
-                                        -Sku $Sku 2>&1 | Out-File apim.txt -Append
+Write-Host "Deploying new API Management instance"
+Try {
+    New-AzureRmApiManagement -ResourceGroupName $DeployToResourceGroupName `
+                        -Location $DeployToResourceGroupLocation `
+                        -Name $ApimName `
+                        -Organization $Organization `
+                        -AdminEmail $AdminEmail `
+                        -VirtualNetwork $apimVnet `
+                        -VpnType $VpnType `
+                        -Sku $Sku 2>&1 | Out-File apim.txt -ErrorAction Stop
+}
+Catch {
+    Write-Error $_.Exception | format-list -force
+    exit
+}
+Write-Host "Successfully completed script"
