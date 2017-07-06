@@ -19,9 +19,7 @@ Param(
   $CertDnsName,
   [Parameter(Mandatory=$True)]
   [string]
-  $Password,
-  [string]
-  $OutputPath="certs"
+  $Password
 )
 
 Function Reset() {
@@ -42,6 +40,8 @@ Function CleanUp() {
     echo "Cleaning up"
     Remove-Item -Recurse -Force Service-Fabric
 }
+
+$OutputPath="$pwd/certs"
 
 # Login to Azure PowerShell CLI and set context
 Try
