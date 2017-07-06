@@ -96,7 +96,7 @@ Try
                             -Password $Password `
                             -CreateSelfSignedCertificate `
                             -DnsName $CertDnsName `
-                            -OutputPath $outputPath 2>&1 | Out-File C:\keyvault.txt -Append
+                            -OutputPath $outputPath 2>&1 | Out-File key-vault.txt -Append
 }
 Catch {
     echo $_.Exception|format-list -force

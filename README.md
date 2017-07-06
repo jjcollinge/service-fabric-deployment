@@ -24,6 +24,7 @@ This setup is split across 2 resources groups.
 
 <img src="images/service-fabric.png" />
 
+## Instructions
 To deploy these components, you must follow **the following instructions, in order**.
 
 1. Copy the example environment file to you local environment file.
@@ -54,6 +55,7 @@ cp env.example.ps1 env.ps1
 -WebApplicationReplyUrl "https://$clusterName.$clusterRgLoc.cloudapp.azure.com:19080/Explorer/index.html"
 ```
 Record the output values for the following properties in a file:
+
 `tenantId` \
 `clusterApplication` \
 `clientApplication`
@@ -82,7 +84,7 @@ Beware, this may take a little while.
  -Organization $apimOrg `
  -AdminEmail $apimAdminEmail
 ```
-Note, this should attach to your cluster's virtual network. If it doesn't manual connect it to the APIM subnet on the 'VNet' virtual network.
+Note, this should attach to your cluster's virtual network. If it doesn't, manual connect it to the APIM subnet on the 'VNet' virtual network.
 
 10. If you plan to deploy Windows Container service to Service Fabric you'll probably want a private Azure Container Registry.
 Edit the template parameters file: `templates\continer-registry\azuredeploy.parameters.json`.
@@ -90,7 +92,7 @@ Edit the template parameters file: `templates\continer-registry\azuredeploy.para
 11. Deploy the Azure Container Registry.
 
 ```
-./container-registry.ps1 `
+.\scripts\container-registry\container-registry.ps1 `
 -AzureSubscriptionId $subId `
 -AzureResourceGroupName $extRgName
 ```
