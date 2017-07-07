@@ -2,6 +2,8 @@
 This repo contains templates and scripts meant for deploying a Service Fabric cluster along with supporting services.
 The templates and scripts will need modifying for your own specific scenario but should give you a good starting point to build on.
 
+## Azure Services
+
 ### Service Fabric Cluster
 The Service Fabric cluster template has the following properties:
 * 3 distinct node types with dedicated
