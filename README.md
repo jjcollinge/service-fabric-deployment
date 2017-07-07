@@ -87,7 +87,7 @@ To deploy these components, you must follow these **instructions, in order**.
         clusterApplication
         clientApplication
 
-6. Visit the [Azure Portal](https://portal.azure.com), go to Azure Active Directory, App Registrations, search using your cluster application and select the Web App. Click on permissions and grant the application access to `Sign-in and read user profiles`.
+6. Visit the [Azure Portal](https://portal.azure.com), go to Azure Active Directory, App Registrations, search using your `clusterApplication` value and select the Web App. Click on permissions and grant the application access to `Sign-in and read user profiles`.
 
 7. Edit the parameters file: `templates\service-fabric\azuredeploy.parameters.json`. Modify the parameters to match your desired cluster configuration. Azure Key Vault details can be found in the text file `key-vault.txt` and Active Directory details were output in step 5.
 
