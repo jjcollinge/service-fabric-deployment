@@ -4,7 +4,7 @@ The templates and scripts will need modifying for your own specific scenario but
 
 ## Azure Services
 
-### Service Fabric Cluster
+### Azure Service Fabric Cluster
 The Service Fabric cluster template has the following properties:
 * 3 distinct node types with dedicated
     * Azure Load Balancers
@@ -19,10 +19,10 @@ The Service Fabric cluster template has the following properties:
 ### Azure Key Vault
 Azure Key Vault is used to store your cluster's security certificate. This currently stores a single self signed certificate. You can extend the template to deploy additional application or reverse proxy certificates.
 
-### Active Directory
+### Azure Active Directory
 By default the Service Fabric management endpoints will be protected by Azure Active Directory authentication.
 
-### API Management
+### Azure API Management
 API Management can be used to front your web services hosted on the cluster. You can add throttling, API secrets, header transformations, etc. The API Management instance will be connected to your cluster's virtual network so you can route traffic internally if desired.
 
 ### Azure Container Registry
@@ -31,7 +31,7 @@ Private docker container images can be stored in the Azure Container Registry. T
 ### Operational Management Suite
 Your cluster will use Windows Azure Diagnostics agents to report ETW events to an Operational Management Suite Workspace. The Azure Service Fabric and Security solutions will be preloaded.
 
-### Applcation Insights
+### Application Insights
 The Windows Azure Diagnostics agents are also configured to report ETW events to an Application Insights instance. You can use the same Application Insights instance to report your application telemetry to via the SDK or EventFlow.
 
 ## Azure Resource Groups
