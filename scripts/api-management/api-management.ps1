@@ -31,7 +31,7 @@ Param(
 
 PromptAzureLoginIfNeeded
 
-ResourceGroupCreateIfNotExist -ResourceGroupName $AzureResourceGroupName -ResourceGroupLocation $AzureResourceGroupLocation
+ResourceGroupCreateIfNotExist -ResourceGroupName $DeployToResourceGroupName -ResourceGroupLocation $DeployToResourceGroupLocation
 Try {
     ResourceGroupFailIfNotExist -ResourceGroupName $VNetResourceGroupName -ResourceGroupLocation $VNetResourceGroupLocation
 } Catch {
@@ -60,8 +60,8 @@ if (-Not($apimSubnet )) {
     }
 }
 
-Write-Host "Using API Management Subnet: $apimSubnet.Id"
-$apimVnet=(New-AzureRmApiManagementVirtualNetwork -Location $DeployToResourceGroupName -SubnetResourceId $apimSubnet.Id)
+Write-Host "Using API Management Subnet: " $apimSubnet.Id
+$apimVnet=(New-AzureRmApiManagementVirtualNetwork -Location $VNetResourceGroupLocation -SubnetResourceId $apimSubnet.Id)
 
 Write-Host "Deploying new API Management instance"
 Try {

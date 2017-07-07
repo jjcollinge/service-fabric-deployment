@@ -18,7 +18,7 @@ Try {
     New-AzureRmResourceGroupDeployment -Name "acrdeploy" `
                                    -ResourceGroupName $AzureResourceGroupName `
                                    -TemplateFile $TemplateFile `
-                                   -TemplateParameterFile $TemplateParametersFile  2>&1 | Out-File C:\container-registry.txt -ErrorAction Stop
+                                   -TemplateParameterFile $TemplateParametersFile 2>&1 | Out-File container-registry.txt
 } Catch {
     Write-Error $_.Exception | format-list -force
     exit

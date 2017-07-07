@@ -26,19 +26,24 @@ $certPassword=""
     Common functions used across the deployment scripts
 #>
 Function ResourceGroupCreateIfNotExist([string]$ResourceGroupName,
-                                       [string]$ResourceGroupLocation) {
-    $resourceGroup=(Get-AzureRmResourceGroup -Name $ResourceGroupName -ErrorAction Stop)
-    if (-Not($resourceGroup))
-    {
+    [string]$ResourceGroupLocation) {
+    if (-not($ResourceGroupName -and $ResourceGroupLocation)) {
+        Write-Error "Invalid function arguments"
+        exit
+    }
+    $resourceGroup = (Get-AzureRmResourceGroup -Name $ResourceGroupName -ErrorAction SilentlyContinue)
+    if (-Not($resourceGroup)) {
         Write-Host "Resource group '$ResourceGroupName' does not exist, creating it now"
         Try {
-            $resourceGroup=(New-AzureRmResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation)
-        } Catch {
+            $resourceGroup = (New-AzureRmResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation)
+        }
+        Catch {
             Write-Error $_.Exception|format-list -force
             exit
         }
-    } else {
-        $status=$resourceGroup.ProvisioningState
+    }
+    else {
+        $status = $resourceGroup.ProvisioningState
         if ($status -ne "Succeeded") {
             Write-Error "Cannot deploy to resource group '$ResourceGroupName' whilst it is in state '$status'"
             exit
@@ -52,17 +57,19 @@ Function ResourceGroupCreateIfNotExist([string]$ResourceGroupName,
 }
 
 Function ResourceGroupFailIfNotExist([string]$ResourceGroupName,
-                                     [string]$ResourceGroupLocation) {
-     $resourceGroup=(Get-AzureRmResourceGroup -Name $ResourceGroupName -ErrorAction Stop)
-    if (-Not($resourceGroup))
-    {
+    [string]$ResourceGroupLocation) {
+    if (-not($ResourceGroupName -and $ResourceGroupLocation)) {
+        Write-Error "Invalid arguments"
+        exit
+    }
+    $resourceGroup = (Get-AzureRmResourceGroup -Name $ResourceGroupName -ErrorAction Stop)
+    if (-Not($resourceGroup)) {
         throw [System.IO.IOException] "Resource group '$ResourceGroupName' does not exist"
     }
 }
 
 Function PromptAzureLoginIfNeeded() {
-    Try
-    {  
+    Try {  
         Select-AzureRmSubscription -SubscriptionId $AzureSubscriptionId -ErrorAction Stop
         Write-Host "Already logged in, setting context to: $AzureSubscription"
     }

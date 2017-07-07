@@ -78,9 +78,10 @@ Beware, this may take a little while.
 .\scripts\api-management\api-management.ps1 `
  -AzureSubscriptionId $subId `
  -DeployToResourceGroupName $extRgName `
- -AzureResourceGroupLocation $extRgLoc `
+ -DeployToResourceGroupLocation $extRgLoc `
  -ApimName $apimName `
- -VnetResourceGroupName $clusterRgName `
+ -VNetResourceGroupName $clusterRgName `
+ -VNetResourceGroupLocation $clusterRgLoc `
  -Organization $apimOrg `
  -AdminEmail $apimAdminEmail
 ```
@@ -97,7 +98,4 @@ Edit the template parameters file: `templates\continer-registry\azuredeploy.para
 -AzureResourceGroupName $extRgName
 ```
 
-12. Once all the deployments have completed successfully, you can grab your Service Fabric endpoint from the portal or the `service-fabric.txt` file. 
-
-### Notes:
-Although API Management will connect to the same virtual network as your cluster. The cluster's node types are currently exposed via an external load balancer and thus don't take route the traffic internally. This will be changed soon to allow the node types to only accept traffic on the virtual network.
+12. Once all the deployments have completed successfully, you can grab your Service Fabric endpoint from the portal or the `service-fabric.txt` file.
