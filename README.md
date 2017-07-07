@@ -32,7 +32,7 @@ Your cluster will use Windows Azure Diagnostics agents to report ETW events to a
 ### Applcation Insights
 The Windows Azure Diagnostics agents are also configured to report ETW events to an Application Insights instance. You can use the same Application Insights instance to report your application telemetry to via the SDK or EventFlow.
 
-##Azure Resource Groups
+###Azure Resource Groups
 The supporting services are deployed into a different Azure Resource Group as their life cycle may not align with that of the cluster.
 
 **Cluster Resource Group**
