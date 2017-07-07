@@ -116,8 +116,8 @@ To deploy these components, you must follow these **instructions, in order**.
 
 11. Deploy the Azure Container Registry.
 
-    .\scripts\container-registry\container-registry.ps1 `
-    -AzureSubscriptionId $subId `
-    -AzureResourceGroupName $extRgName
+        .\scripts\container-registry\container-registry.ps1 `
+        -AzureSubscriptionId $subId `
+        -AzureResourceGroupName $extRgName
 
 12. Once all the deployments have completed **successfully**, you can grab your Service Fabric endpoint from the portal or the `service-fabric.txt` file and visit the Service Fabric Explorer. Your OMS Workspace and Application Insights will be accessible via the Azure Portal.
